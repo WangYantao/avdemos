@@ -16,7 +16,7 @@ import com.demo.avdemos.R;
 
 import java.io.File;
 
-public class ShowImage extends AppCompatActivity {
+public class ShowImageActivity extends AppCompatActivity {
 
     ImageView imageView;
     SurfaceView surfaceView;

@@ -3,21 +3,19 @@ package com.demo.avdemos;
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 
-import com.demo.avdemos.image.ShowImage;
-
-import java.util.List;
+import com.demo.avdemos.audio.RecordPCMActivity;
+import com.demo.avdemos.image.ShowImageActivity;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
     private static final int PERMISSION_REQUEST_CODE= 100001;
 
-    Button btnShowImage;
+    Button btnShowImage, btnRecorderPCM;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,13 +30,19 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private void initView(){
         btnShowImage = findViewById(R.id.btnShowImage);
         btnShowImage.setOnClickListener(this);
+
+        btnRecorderPCM = findViewById(R.id.btnRecorderPCM);
+        btnRecorderPCM.setOnClickListener(this);
     }
 
     @Override
     public void onClick(View v) {
         switch (v.getId()){
             case R.id.btnShowImage:
-                toActivity(ShowImage.class);
+                toActivity(ShowImageActivity.class);
+                break;
+            case R.id.btnRecorderPCM:
+                toActivity(RecordPCMActivity.class);
                 break;
         }
     }
@@ -49,6 +53,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private void getPermissions(){
         checkAndRequestPermission(Manifest.permission.READ_EXTERNAL_STORAGE);
+        checkAndRequestPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE);
+        checkAndRequestPermission(Manifest.permission.RECORD_AUDIO);
     }
 
     private void checkAndRequestPermission(String permission){
