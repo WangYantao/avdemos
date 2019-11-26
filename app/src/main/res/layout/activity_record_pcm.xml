@@ -9,13 +9,19 @@
 
     <Button
         android:id="@+id/btnStart"
-        android:text="开始录制"
+        android:text="开始录制(PCM)"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
     <Button
         android:id="@+id/btnStop"
-        android:text="停止录制"
+        android:text="停止录制(PCM)"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <Button
+        android:id="@+id/btnPCM2WAV"
+        android:text="PCM转wav"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 </LinearLayout>

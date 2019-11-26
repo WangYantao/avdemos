@@ -4,3 +4,4 @@
 
 * android 几种显示图片的方式
 * android AudioRecorder 录制音频（PCM）
+* pcm 转 wav
