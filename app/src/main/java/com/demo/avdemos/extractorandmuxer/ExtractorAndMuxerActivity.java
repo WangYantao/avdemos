@@ -1,7 +1,9 @@
 package com.demo.avdemos.extractorandmuxer;
 
+import android.media.MediaCodec;
 import android.media.MediaExtractor;
 import android.media.MediaFormat;
+import android.media.MediaMuxer;
 import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -22,6 +24,7 @@ public class ExtractorAndMuxerActivity extends AppCompatActivity implements View
     String mp4FilePath = null;
     String h264FilePath = null;
     String aacFilePath = null;
+    String muxerMp4FilePath = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,19 +41,24 @@ public class ExtractorAndMuxerActivity extends AppCompatActivity implements View
         mp4FilePath = Environment.getExternalStorageDirectory() + "/avdemos/001.mp4";
         h264FilePath = Environment.getExternalStorageDirectory() + "/avdemos/001-video.h264";
         aacFilePath = Environment.getExternalStorageDirectory() + "/avdemos/001-audio.aac";
+        muxerMp4FilePath = Environment.getExternalStorageDirectory() + "/avdemos/001-muxer.mp4";
     }
 
     @Override
     public void onClick(View v) {
         switch (v.getId()){
             case R.id.btnExtractor:
-                doExtractor();
+                extractorAndMuxer();
                 break;
         }
     }
 
-    private void doExtractor(){
+    private void extractorAndMuxer(){
         MediaExtractor mediaExtractor = new MediaExtractor();
+
+        MediaMuxer mediaMuxer = null;
+        int framebrate = 0;
+        int muxerVideoTrackIndex = 0;
 
         FileOutputStream h264os = null;
         FileOutputStream aacos = null;
@@ -67,18 +75,31 @@ public class ExtractorAndMuxerActivity extends AppCompatActivity implements View
                 String mime = mediaFormat.getString(MediaFormat.KEY_MIME);
                 if (mime.startsWith("video/")){
                     videoTrackIndex = i;
+
+                    framebrate = mediaFormat.getInteger(MediaFormat.KEY_FRAME_RATE);
+                    mediaMuxer = new MediaMuxer(muxerMp4FilePath, MediaMuxer.OutputFormat.MUXER_OUTPUT_MPEG_4);
+                    muxerVideoTrackIndex = mediaMuxer.addTrack(mediaFormat);
+                    mediaMuxer.start();
                 }
                 if (mime.startsWith("audio/")){
                     audioTrackIndex = i;
                 }
             }
 
-            ByteBuffer byteBuffer = ByteBuffer.allocate(500 * 1024);
+            MediaCodec.BufferInfo mediaCodecBufferInfo = new MediaCodec.BufferInfo();
+            mediaCodecBufferInfo.presentationTimeUs = 0;
 
+            ByteBuffer byteBuffer = ByteBuffer.allocate(500 * 1024);
             mediaExtractor.selectTrack(videoTrackIndex);
-            int readCount = 0;
-            while ((readCount = mediaExtractor.readSampleData(byteBuffer, 0)) != -1){
-                byte[] bytes = new byte[readCount];
+            int sampleSize = 0;
+            while ((sampleSize = mediaExtractor.readSampleData(byteBuffer, 0)) > 0){
+                mediaCodecBufferInfo.offset = 0;
+                mediaCodecBufferInfo.size = sampleSize;
+                mediaCodecBufferInfo.flags = MediaCodec.BUFFER_FLAG_KEY_FRAME;
+                mediaCodecBufferInfo.presentationTimeUs += 1000 * 1000 / framebrate;
+                mediaMuxer.writeSampleData(muxerVideoTrackIndex, byteBuffer, mediaCodecBufferInfo);
+
+                byte[] bytes = new byte[sampleSize];
                 byteBuffer.get(bytes);
                 h264os.write(bytes);
                 byteBuffer.clear();
@@ -86,13 +107,13 @@ public class ExtractorAndMuxerActivity extends AppCompatActivity implements View
             }
 
             mediaExtractor.selectTrack(audioTrackIndex);
-            readCount = 0;
-            while ((readCount = mediaExtractor.readSampleData(byteBuffer, 0)) != -1){
-                byte[] bytes = new byte[readCount];
+            sampleSize = 0;
+            while ((sampleSize = mediaExtractor.readSampleData(byteBuffer, 0)) > 0){
+                byte[] bytes = new byte[sampleSize];
                 byteBuffer.get(bytes);
-                byte[] aacbytes = new byte[readCount + 7];
-                addADTStoPacket(aacbytes, readCount + 7);
-                System.arraycopy(bytes, 0, aacbytes, 7, readCount);
+                byte[] aacbytes = new byte[sampleSize + 7];
+                addADTStoPacket(aacbytes, sampleSize + 7);
+                System.arraycopy(bytes, 0, aacbytes, 7, sampleSize);
                 aacos.write(aacbytes);
                 byteBuffer.clear();
                 mediaExtractor.advance();
@@ -102,6 +123,9 @@ public class ExtractorAndMuxerActivity extends AppCompatActivity implements View
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
+            mediaMuxer.stop();
+            mediaMuxer.release();
+
             mediaExtractor.release();
             mediaExtractor = null;
             try {
