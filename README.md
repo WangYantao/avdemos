@@ -6,3 +6,4 @@
 * android AudioRecorder 录制音频（PCM）
 * pcm 转 wav
 * AudioTrack 播放 wav 音频（static mode & stream mode）
+* android camera2 api 使用 参考（https://github.com/WangYantao/android-camera-demos）

@@ -9,13 +9,14 @@ import android.view.View;
 import android.widget.Button;
 
 import com.demo.avdemos.audio.RecordPCMActivity;
+import com.demo.avdemos.camera.CameraActivity;
 import com.demo.avdemos.image.ShowImageActivity;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
     private static final int PERMISSION_REQUEST_CODE= 100001;
 
-    Button btnShowImage, btnRecorderPCM;
+    Button btnShowImage, btnRecorderPCM, btnCamera;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,6 +34,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         btnRecorderPCM = findViewById(R.id.btnRecorderPCM);
         btnRecorderPCM.setOnClickListener(this);
+
+        btnCamera = findViewById(R.id.btnCamera);
+        btnCamera.setOnClickListener(this);
     }
 
     @Override
@@ -43,6 +47,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 break;
             case R.id.btnRecorderPCM:
                 toActivity(RecordPCMActivity.class);
+                break;
+            case R.id.btnCamera:
+                toActivity(CameraActivity.class);
                 break;
         }
     }
@@ -55,6 +62,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         checkAndRequestPermission(Manifest.permission.READ_EXTERNAL_STORAGE);
         checkAndRequestPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE);
         checkAndRequestPermission(Manifest.permission.RECORD_AUDIO);
+        checkAndRequestPermission(Manifest.permission.CAMERA);
     }
 
     private void checkAndRequestPermission(String permission){
