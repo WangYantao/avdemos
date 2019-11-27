@@ -30,6 +30,12 @@
            android:layout_width="match_parent"
            android:layout_height="wrap_content" />
 
+       <Button
+           android:id="@+id/btnExtractorAndMuxer"
+           android:text="媒体文件封装/解封装"
+           android:layout_width="match_parent"
+           android:layout_height="wrap_content" />
+
    </LinearLayout>
 
 </ScrollView>

@@ -21,7 +21,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
-public class RecordPCMActivity extends AppCompatActivity implements View.OnClickListener {
+public class RecordAndPlayPCMActivity extends AppCompatActivity implements View.OnClickListener {
 
     Button btnStart, btnStop, btnAddHeader, btnPlayInStaticMode, btnPlayInStreamMode;
 
@@ -42,7 +42,7 @@ public class RecordPCMActivity extends AppCompatActivity implements View.OnClick
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_record_pcm);
+        setContentView(R.layout.activity_record_and_play_pcm);
 
         initData();
 

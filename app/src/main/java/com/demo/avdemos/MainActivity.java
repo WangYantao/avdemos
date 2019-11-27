@@ -8,15 +8,16 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 
-import com.demo.avdemos.audio.RecordPCMActivity;
+import com.demo.avdemos.audio.RecordAndPlayPCMActivity;
 import com.demo.avdemos.camera.CameraActivity;
+import com.demo.avdemos.extractorandmuxer.ExtractorAndMuxerActivity;
 import com.demo.avdemos.image.ShowImageActivity;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
     private static final int PERMISSION_REQUEST_CODE= 100001;
 
-    Button btnShowImage, btnRecorderPCM, btnCamera;
+    Button btnShowImage, btnRecorderPCM, btnCamera, btnExtractorAndMuxer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,6 +38,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         btnCamera = findViewById(R.id.btnCamera);
         btnCamera.setOnClickListener(this);
+
+        btnExtractorAndMuxer = findViewById(R.id.btnExtractorAndMuxer);
+        btnExtractorAndMuxer.setOnClickListener(this);
     }
 
     @Override
@@ -46,10 +50,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 toActivity(ShowImageActivity.class);
                 break;
             case R.id.btnRecorderPCM:
-                toActivity(RecordPCMActivity.class);
+                toActivity(RecordAndPlayPCMActivity.class);
                 break;
             case R.id.btnCamera:
                 toActivity(CameraActivity.class);
+                break;
+            case R.id.btnExtractorAndMuxer:
+                toActivity(ExtractorAndMuxerActivity.class);
                 break;
         }
     }
@@ -59,6 +66,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void getPermissions(){
+        checkAndRequestPermission(Manifest.permission.INTERNET);
         checkAndRequestPermission(Manifest.permission.READ_EXTERNAL_STORAGE);
         checkAndRequestPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE);
         checkAndRequestPermission(Manifest.permission.RECORD_AUDIO);

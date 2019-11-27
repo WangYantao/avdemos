@@ -7,3 +7,4 @@
 * pcm 转 wav
 * AudioTrack 播放 wav 音频（static mode & stream mode）
 * android camera2 api 使用 参考（https://github.com/WangYantao/android-camera-demos）
+* android Extractor 解封装 mp4 文件为 aac 和 h264
