@@ -18,7 +18,8 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity android:name=".extractorandmuxer.ExtractorAndMuxerActivity"></activity>
-        <activity android:name=".camera.CameraActivity" />
+        <activity android:name=".camera.CameraActivity"
+            android:screenOrientation="portrait"/>
         <activity android:name=".audio.RecordAndPlayPCMActivity" />
         <activity android:name=".image.ShowImageActivity" />
         <activity android:name=".MainActivity">

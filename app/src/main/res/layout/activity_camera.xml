@@ -8,9 +8,14 @@
     tools:context=".camera.CameraActivity">
 
     <TextView
-        android:layout_gravity="center"
-        android:text="该部分暂时参考以前的内容：\n https://github.com/WangYantao/android-camera-demos"
+        android:layout_gravity="center_horizontal"
+        android:text="相机详细内容可参考：\n https://github.com/WangYantao/android-camera-demos"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
+
+    <SurfaceView
+        android:id="@+id/surfaceView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
 
 </LinearLayout>
