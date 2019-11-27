@@ -19,7 +19,7 @@ import java.io.IOException;
 
 public class RecordPCMActivity extends AppCompatActivity implements View.OnClickListener {
 
-    Button btnStart, btnStop, btnPCM2WAV;
+    Button btnStart, btnStop, btnAddHeader;
 
     AudioRecord audioRecord = null;
     int bufferSize = 0;
@@ -48,8 +48,8 @@ public class RecordPCMActivity extends AppCompatActivity implements View.OnClick
         btnStop = findViewById(R.id.btnStop);
         btnStop.setOnClickListener(this);
 
-        btnPCM2WAV = findViewById(R.id.btnPCM2WAV);
-        btnPCM2WAV.setOnClickListener(this);
+        btnAddHeader = findViewById(R.id.btnAddHeader);
+        btnAddHeader.setOnClickListener(this);
     }
 
     @Override
@@ -63,8 +63,8 @@ public class RecordPCMActivity extends AppCompatActivity implements View.OnClick
                 doStop();
                 break;
 
-            case R.id.btnPCM2WAV:
-                pcm2wav();
+            case R.id.btnAddHeader:
+                addHeaderToPCM();
                 break;
         }
     }
@@ -131,9 +131,9 @@ public class RecordPCMActivity extends AppCompatActivity implements View.OnClick
         super.onDestroy();
     }
 
-    private void pcm2wav(){
+    private void addHeaderToPCM(){
         if (isRecording){
-            Toast.makeText(this, "正在录制中，请先停止录制再进行转换", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "正在录制中，请先停止录制再添加文件头", Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -156,7 +156,7 @@ public class RecordPCMActivity extends AppCompatActivity implements View.OnClick
             is.close();
             os.close();
         } catch (FileNotFoundException e) {
-            Toast.makeText(this, "请先录制音频再转换", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "请先录制音频再添加文件头", Toast.LENGTH_SHORT).show();
             e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
