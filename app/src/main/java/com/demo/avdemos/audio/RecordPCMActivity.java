@@ -1,7 +1,10 @@
 package com.demo.avdemos.audio;
 
+import android.media.AudioAttributes;
 import android.media.AudioFormat;
+import android.media.AudioManager;
 import android.media.AudioRecord;
+import android.media.AudioTrack;
 import android.media.MediaRecorder;
 import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
@@ -12,6 +15,7 @@ import android.widget.Toast;
 
 import com.demo.avdemos.R;
 
+import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -19,17 +23,20 @@ import java.io.IOException;
 
 public class RecordPCMActivity extends AppCompatActivity implements View.OnClickListener {
 
-    Button btnStart, btnStop, btnAddHeader;
+    Button btnStart, btnStop, btnAddHeader, btnPlayInStaticMode, btnPlayInStreamMode;
 
     AudioRecord audioRecord = null;
     int bufferSize = 0;
     boolean isRecording = false;
 
+    private AudioTrack audioTrack = null;
+
     String pcmFilePath = null;
     String wavFilePath = null;
 
     private static final int AUDIO_SAMPLE_RATE = 44100;
-    private static final int AUDIO_CHANNEL = AudioFormat.CHANNEL_IN_MONO;
+    private static final int AUDIO_CHANNEL_IN = AudioFormat.CHANNEL_IN_MONO;
+    private static final int AUDIO_CHANNEL_OUT = AudioFormat.CHANNEL_OUT_MONO;
     private static final int AUDIO_FORAMT = AudioFormat.ENCODING_PCM_16BIT;
 
     @Override
@@ -37,8 +44,7 @@ public class RecordPCMActivity extends AppCompatActivity implements View.OnClick
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_record_pcm);
 
-        pcmFilePath = Environment.getExternalStorageDirectory() + "/avdemos/001.pcm";
-        wavFilePath = Environment.getExternalStorageDirectory() + "/avdemos/001.wav";
+        initData();
 
         initRecoder();
 
@@ -50,11 +56,17 @@ public class RecordPCMActivity extends AppCompatActivity implements View.OnClick
 
         btnAddHeader = findViewById(R.id.btnAddHeader);
         btnAddHeader.setOnClickListener(this);
+
+        btnPlayInStaticMode = findViewById(R.id.btnPlayInStaticMode);
+        btnPlayInStaticMode.setOnClickListener(this);
+
+        btnPlayInStreamMode = findViewById(R.id.btnPlayInStreamMode);
+        btnPlayInStreamMode.setOnClickListener(this);
     }
 
     @Override
     public void onClick(View v) {
-        switch (v.getId()){
+        switch (v.getId()) {
             case R.id.btnStart:
                 doStart();
                 break;
@@ -66,26 +78,40 @@ public class RecordPCMActivity extends AppCompatActivity implements View.OnClick
             case R.id.btnAddHeader:
                 addHeaderToPCM();
                 break;
+
+            case R.id.btnPlayInStaticMode:
+                playInStaticMode();
+                break;
+
+            case R.id.btnPlayInStreamMode:
+                playInStreamMode();
+                break;
         }
     }
 
-    private void initRecoder(){
-        bufferSize = AudioRecord.getMinBufferSize(AUDIO_SAMPLE_RATE, AUDIO_CHANNEL, AUDIO_FORAMT);
-        audioRecord = new AudioRecord(MediaRecorder.AudioSource.MIC, AUDIO_SAMPLE_RATE, AUDIO_CHANNEL, AUDIO_FORAMT, bufferSize);
+    private void initData(){
+        pcmFilePath = Environment.getExternalStorageDirectory() + "/avdemos/001.pcm";
+        wavFilePath = Environment.getExternalStorageDirectory() + "/avdemos/001.wav";
+
+        bufferSize = AudioRecord.getMinBufferSize(AUDIO_SAMPLE_RATE, AUDIO_CHANNEL_IN, AUDIO_FORAMT);
     }
 
-    private void doStart(){
+    private void initRecoder() {
+        audioRecord = new AudioRecord(MediaRecorder.AudioSource.MIC, AUDIO_SAMPLE_RATE, AUDIO_CHANNEL_IN, AUDIO_FORAMT, bufferSize);
+    }
+
+    private void doStart() {
         audioRecord.startRecording();
         isRecording = true;
         startRecordThread();
     }
 
-    private void doStop(){
+    private void doStop() {
         isRecording = false;
         audioRecord.stop();
     }
 
-    private void startRecordThread(){
+    private void startRecordThread() {
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -97,10 +123,10 @@ public class RecordPCMActivity extends AppCompatActivity implements View.OnClick
                     e.printStackTrace();
                 }
 
-                if (os !=null){
-                    while (isRecording){
+                if (os != null) {
+                    while (isRecording) {
                         int ret = audioRecord.read(data, 0, bufferSize);
-                        if (ret != AudioRecord.ERROR_INVALID_OPERATION){
+                        if (ret != AudioRecord.ERROR_INVALID_OPERATION) {
                             try {
                                 os.write(data);
                             } catch (IOException e) {
@@ -121,8 +147,8 @@ public class RecordPCMActivity extends AppCompatActivity implements View.OnClick
 
     @Override
     protected void onDestroy() {
-        if (audioRecord != null){
-            if (isRecording){
+        if (audioRecord != null) {
+            if (isRecording) {
                 doStop();
             }
             audioRecord.release();
@@ -131,8 +157,8 @@ public class RecordPCMActivity extends AppCompatActivity implements View.OnClick
         super.onDestroy();
     }
 
-    private void addHeaderToPCM(){
-        if (isRecording){
+    private void addHeaderToPCM() {
+        if (isRecording) {
             Toast.makeText(this, "正在录制中，请先停止录制再添加文件头", Toast.LENGTH_SHORT).show();
             return;
         }
@@ -140,7 +166,7 @@ public class RecordPCMActivity extends AppCompatActivity implements View.OnClick
         FileInputStream is;
         FileOutputStream os;
         long audioLen, dataLen;
-        int channelNum = (AUDIO_CHANNEL == AudioFormat.CHANNEL_IN_MONO ? 1 : 2);
+        int channelNum = (AUDIO_CHANNEL_IN == AudioFormat.CHANNEL_IN_MONO ? 1 : 2);
         long byteRate = 16 * AUDIO_SAMPLE_RATE * channelNum / 8;
         byte[] data = new byte[bufferSize];
 
@@ -149,8 +175,8 @@ public class RecordPCMActivity extends AppCompatActivity implements View.OnClick
             os = new FileOutputStream(wavFilePath);
             audioLen = is.getChannel().size();
             dataLen = audioLen + 36;
-            writeWaveFileHeader(os, audioLen, dataLen, AUDIO_SAMPLE_RATE, AUDIO_CHANNEL, byteRate);
-            while (is.read(data) != -1){
+            writeWaveFileHeader(os, audioLen, dataLen, AUDIO_SAMPLE_RATE, AUDIO_CHANNEL_IN, byteRate);
+            while (is.read(data) != -1) {
                 os.write(data);
             }
             is.close();
@@ -219,5 +245,112 @@ public class RecordPCMActivity extends AppCompatActivity implements View.OnClick
         header[42] = (byte) ((totalAudioLen >> 16) & 0xff);
         header[43] = (byte) ((totalAudioLen >> 24) & 0xff);
         out.write(header, 0, 44);
+    }
+
+    private void playInStaticMode() {
+        releaseAudioTrack();
+
+        startStaticPlayThread();
+    }
+
+    private void startStaticPlayThread(){
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                byte[] audioData = null;
+                byte[] data = new byte[bufferSize];
+                FileInputStream fis;
+                try {
+                    fis = new FileInputStream(wavFilePath);
+                    ByteArrayOutputStream bos = new ByteArrayOutputStream();
+                    while(fis.read(data) != -1){
+                        bos.write(data);
+                    }
+                    audioData = bos.toByteArray();
+                    fis.close();
+
+                    audioTrack = new AudioTrack.Builder()
+                            .setAudioAttributes(new AudioAttributes.Builder()
+                                    .setUsage(AudioAttributes.USAGE_MEDIA)
+                                    .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
+                                    .setLegacyStreamType(AudioManager.STREAM_MUSIC)
+                                    .build())
+                            .setAudioFormat(new AudioFormat.Builder()
+                                    .setEncoding(AUDIO_FORAMT)
+                                    .setSampleRate(AUDIO_SAMPLE_RATE)
+                                    .setChannelMask(AUDIO_CHANNEL_OUT)
+                                    .build())
+                            .setTransferMode(AudioTrack.MODE_STATIC)
+                            .setBufferSizeInBytes(audioData.length)
+                            .build();
+                    audioTrack.write(audioData, 0, audioData.length);
+                    audioTrack.play();
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }).start();
+    }
+
+    private void playInStreamMode(){
+        releaseAudioTrack();
+
+        startStreamPlayThread();
+    }
+
+    private void startStreamPlayThread(){
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                audioTrack = new AudioTrack.Builder()
+                        .setAudioAttributes(new AudioAttributes.Builder()
+                                .setUsage(AudioAttributes.USAGE_MEDIA)
+                                .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
+                                .setLegacyStreamType(AudioManager.STREAM_MUSIC)
+                                .build())
+                        .setAudioFormat(new AudioFormat.Builder()
+                                .setEncoding(AUDIO_FORAMT)
+                                .setSampleRate(AUDIO_SAMPLE_RATE)
+                                .setChannelMask(AUDIO_CHANNEL_OUT)
+                                .build())
+                        .setTransferMode(AudioTrack.MODE_STREAM)
+                        .setBufferSizeInBytes(bufferSize)
+                        .build();
+                audioTrack.play();
+
+                byte[] data = new byte[bufferSize];
+                FileInputStream fis;
+                try {
+                    fis = new FileInputStream(wavFilePath);
+                    int readCount = 0;
+                    while((readCount = fis.read(data)) != -1){
+                        audioTrack.write(data, 0, readCount);
+                    }
+                    fis.close();
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }).start();
+    }
+
+    @Override
+    protected void onPause() {
+        releaseAudioTrack();
+        super.onPause();
+    }
+
+    private void releaseAudioTrack() {
+        if (audioTrack != null) {
+            if (audioTrack.getPlayState() == AudioTrack.PLAYSTATE_PLAYING
+                    || audioTrack.getPlayState() == AudioTrack.PLAYSTATE_PLAYING) {
+                audioTrack.stop();
+            }
+            audioTrack.release();
+        }
     }
 }

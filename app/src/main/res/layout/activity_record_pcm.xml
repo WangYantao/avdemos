@@ -24,4 +24,16 @@
         android:text="PCM添加wave文件头"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
+
+    <Button
+        android:id="@+id/btnPlayInStaticMode"
+        android:text="播放(static mode)"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <Button
+        android:id="@+id/btnPlayInStreamMode"
+        android:text="播放(stream mode)"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
 </LinearLayout>
