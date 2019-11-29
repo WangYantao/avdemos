@@ -13,6 +13,12 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
 
+    <Button
+        android:id="@+id/btnRecoderVideo"
+        android:text="开始录制"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
     <SurfaceView
         android:id="@+id/surfaceView"
         android:layout_width="match_parent"

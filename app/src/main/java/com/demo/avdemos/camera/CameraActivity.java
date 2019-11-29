@@ -1,7 +1,6 @@
 package com.demo.avdemos.camera;
 
 import android.Manifest;
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.graphics.ImageFormat;
@@ -17,14 +16,16 @@ import android.hardware.camera2.TotalCaptureResult;
 import android.hardware.camera2.params.StreamConfigurationMap;
 import android.media.Image;
 import android.media.ImageReader;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.util.Log;
 import android.util.Size;
 import android.view.Surface;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
+import android.view.View;
+import android.widget.Button;
 import android.widget.Toast;
 
 import com.demo.avdemos.R;
@@ -38,6 +39,10 @@ import java.util.List;
 public class CameraActivity extends AppCompatActivity {
 
     private static final String TAG = "CameraActivity";
+
+    Button btnRecoderVideo;
+    boolean isRecording = false;
+    H264Encoder h264Encoder;
 
     SurfaceView surfaceView;
 
@@ -57,6 +62,25 @@ public class CameraActivity extends AppCompatActivity {
     }
 
     private void initView() {
+        btnRecoderVideo = findViewById(R.id.btnRecoderVideo);
+        btnRecoderVideo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (h264Encoder == null){
+                    Toast.makeText(CameraActivity.this, "编码器尚未初始化", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                isRecording = !isRecording;
+                btnRecoderVideo.setText(isRecording ? "停止录制" : "开始录制");
+                if (isRecording){
+                    h264Encoder.startEncoder();
+                }else {
+                    h264Encoder.stopEncoder();
+                }
+            }
+        });
+
         surfaceView = findViewById(R.id.surfaceView);
         surfaceView.getHolder().addCallback(new SurfaceHolder.Callback() {
             @Override
@@ -88,6 +112,8 @@ public class CameraActivity extends AppCompatActivity {
         setOutputSize();
 
         setReader();
+
+        setEncoder();
 
         if (checkSelfPermission(Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
 
@@ -181,7 +207,7 @@ public class CameraActivity extends AppCompatActivity {
                 return o2.getWidth() * o2.getHeight() - o1.getWidth() * o1.getHeight();
             }
         });
-        outputSize = sizes.get(0);
+        outputSize = sizes.get(5);
         Log.e(TAG, "setOutputSize: w = " + outputSize.getWidth() + "; h = " + outputSize.getHeight());
     }
 
@@ -192,13 +218,16 @@ public class CameraActivity extends AppCompatActivity {
             public void onImageAvailable(ImageReader reader) {
                 Image image = reader.acquireLatestImage();
                 if (image != null){
-                    ByteBuffer buffer = image.getPlanes()[0].getBuffer();
-                    byte[] data = new byte[buffer.remaining()];
-                    buffer.get(data);
-                    Log.e(TAG, "onImageAvailable: data-size:" + data.length * 1.0 / 1024 / 1024 + "M");
+                    if (h264Encoder != null){
+                        h264Encoder.putYuv420Data(H264Encoder.getDataFromImage(image, H264Encoder.COLOR_FormatI420));
+                    }
                     image.close();
                 }
             }
         }, null);
+    }
+
+    private void setEncoder(){
+        h264Encoder = new H264Encoder(outputSize.getWidth(), outputSize.getHeight(), 30);
     }
 }
