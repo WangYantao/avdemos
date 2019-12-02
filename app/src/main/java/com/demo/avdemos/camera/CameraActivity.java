@@ -4,6 +4,7 @@ import android.Manifest;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.graphics.ImageFormat;
+import android.graphics.Rect;
 import android.graphics.SurfaceTexture;
 import android.hardware.camera2.CameraAccessException;
 import android.hardware.camera2.CameraCaptureSession;
@@ -197,7 +198,6 @@ public class CameraActivity extends AppCompatActivity {
         }
     }
 
-
     private void setOutputSize() {
         StreamConfigurationMap configs = characteristics.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP);
         List<Size> sizes = Arrays.asList(configs.getOutputSizes(SurfaceTexture.class));
@@ -207,8 +207,14 @@ public class CameraActivity extends AppCompatActivity {
                 return o2.getWidth() * o2.getHeight() - o1.getWidth() * o1.getHeight();
             }
         });
-        outputSize = sizes.get(5);
-        Log.e(TAG, "setOutputSize: w = " + outputSize.getWidth() + "; h = " + outputSize.getHeight());
+        outputSize = sizes.get(7);
+        for (Size size : sizes){
+            if (size.getWidth() < 2000 && size.getWidth() > 1000 && size.getHeight() < 2000 && size.getHeight() > 1000){
+                outputSize = size;
+                Log.e(TAG, "__________OutputSize: w = " + size.getWidth() + "; h = " + size.getHeight());
+                break;
+            }
+        }
     }
 
     private void setReader(){
@@ -219,7 +225,7 @@ public class CameraActivity extends AppCompatActivity {
                 Image image = reader.acquireLatestImage();
                 if (image != null){
                     if (h264Encoder != null){
-                        h264Encoder.putYuv420Data(H264Encoder.getDataFromImage(image, H264Encoder.COLOR_FormatI420));
+                        h264Encoder.putYuv420Data(H264Encoder.getDataFromImage(image, H264Encoder.COLOR_FormatNV12));
                     }
                     image.close();
                 }

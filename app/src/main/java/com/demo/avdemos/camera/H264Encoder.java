@@ -2,11 +2,15 @@ package com.demo.avdemos.camera;
 
 import android.graphics.ImageFormat;
 import android.graphics.Rect;
+import android.graphics.YuvImage;
 import android.media.Image;
 import android.media.MediaCodec;
 import android.media.MediaCodecInfo;
+import android.media.MediaCodecList;
 import android.media.MediaFormat;
+import android.media.MediaMuxer;
 import android.os.Environment;
+import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
@@ -34,28 +38,29 @@ public class H264Encoder {
 
     public static final int COLOR_FormatI420 = 1;
     public static final int COLOR_FormatNV21 = 2;
+    public static final int COLOR_FormatNV12 = 3;
+
+    private String mp4FilePath;
+    private BufferedOutputStream outputStream;
 
     private MediaCodec mediaCodec;
     private MediaFormat mediaFormat;
-    byte[] configData;
 
-    private BufferedOutputStream outputStream;
+    private MediaMuxer mediaMuxer;
+    private int muxerVideoTrackIndex;
+
     private ArrayBlockingQueue<byte[]> yuv420queue = new ArrayBlockingQueue<>(10);
-    private int width, height, framerate;
-    private String mp4FilePath;
+    private boolean isRecording = false;
+
 
     public H264Encoder(int width, int height, int framerate) {
-        this.width = width;
-        this.height = height;
-        this.framerate = framerate;
-
         mp4FilePath = Environment.getExternalStorageDirectory() + "/avdemos/002.mp4";
 
         mediaFormat = MediaFormat.createVideoFormat(MediaFormat.MIMETYPE_VIDEO_AVC, width, height);
         mediaFormat.setInteger(MediaFormat.KEY_COLOR_FORMAT, MediaCodecInfo.CodecCapabilities.COLOR_FormatYUV420Flexible);
         mediaFormat.setInteger(MediaFormat.KEY_BIT_RATE, width * height * framerate * 5);
         mediaFormat.setInteger(MediaFormat.KEY_FRAME_RATE, framerate);
-        mediaFormat.setInteger(MediaFormat.KEY_I_FRAME_INTERVAL, 2);
+        mediaFormat.setInteger(MediaFormat.KEY_I_FRAME_INTERVAL, 3);
     }
 
     public void putYuv420Data(byte[] data) {
@@ -67,6 +72,8 @@ public class H264Encoder {
 
     public void startEncoder() {
         try {
+            isRecording = true;
+
             outputStream = new BufferedOutputStream(new FileOutputStream(mp4FilePath));
 
             mediaCodec = MediaCodec.createEncoderByType(MediaFormat.MIMETYPE_VIDEO_AVC);
@@ -75,40 +82,46 @@ public class H264Encoder {
                 public void onInputBufferAvailable(@NonNull MediaCodec codec, int index) {
                     ByteBuffer inBuffer = codec.getInputBuffer(index);
                     inBuffer.clear();
-                    byte[] data = new byte[0];
+
+                    byte[] data = null;
                     if (yuv420queue.size() > 0) {
                         data = yuv420queue.poll();
                     }
-                    inBuffer.put(data);
-                    Log.e(TAG, "-----------onInputBufferAvailable: data length = " + data.length);
-                    codec.queueInputBuffer(index, 0, data.length, System.nanoTime() / 1000, 0);
+
+                    if (data == null && isRecording) {
+                        codec.queueInputBuffer(index, 0, 0, System.nanoTime() / 1000, 0);
+                    }
+
+                    if (data != null && isRecording) {
+                        inBuffer.put(data);
+                        codec.queueInputBuffer(index, 0, data.length, System.nanoTime() / 1000, 0);
+                    }
+
+                    if (!isRecording) {
+                        codec.queueInputBuffer(index, 0, data.length, System.nanoTime() / 1000, MediaCodec.BUFFER_FLAG_END_OF_STREAM);
+                    }
                 }
 
                 @Override
                 public void onOutputBufferAvailable(@NonNull MediaCodec codec, int index, @NonNull MediaCodec.BufferInfo info) {
-                    Log.e(TAG, "-----------onOutputBufferAvailable: offset = " + info.offset + "; size = " + info.size);
-                    try {
-                        ByteBuffer outBuffer = codec.getOutputBuffer(index);
-                        byte[] outData = new byte[info.size];
-                        outBuffer.get(outData);
-
-                        if (info.flags == MediaCodec.BUFFER_FLAG_CODEC_CONFIG) {
-                            configData = new byte[info.size];
-                            configData = outData;
-                        } else if (info.flags == MediaCodec.BUFFER_FLAG_KEY_FRAME) {
-                            byte[] keyFrameData = new byte[info.size + configData.length];
-                            System.arraycopy(configData, 0, keyFrameData, 0, configData.length);
-                            System.arraycopy(outData, 0, keyFrameData, configData.length, outData.length);
-                            outputStream.write(keyFrameData, 0, keyFrameData.length);
-
-                        } else {
-                            outputStream.write(outData, 0, outData.length);
+                    if (mediaMuxer == null) {
+                        MediaFormat outFormat = codec.getOutputFormat(index);
+                        try {
+                            mediaMuxer = new MediaMuxer(mp4FilePath, MediaMuxer.OutputFormat.MUXER_OUTPUT_MPEG_4);
+                            muxerVideoTrackIndex = mediaMuxer.addTrack(outFormat);
+                            mediaMuxer.start();
+                        } catch (IOException e) {
+                            e.printStackTrace();
                         }
-
-                        codec.releaseOutputBuffer(index, false);
-                    } catch (IOException e) {
-                        e.printStackTrace();
                     }
+
+                    if (info.flags != MediaCodec.BUFFER_FLAG_CODEC_CONFIG) {
+                        ByteBuffer outBuffer = codec.getOutputBuffer(index);
+                        mediaMuxer.writeSampleData(muxerVideoTrackIndex, outBuffer, info);
+                    }
+
+                    codec.releaseOutputBuffer(index, false);
+
                 }
 
                 @Override
@@ -118,9 +131,11 @@ public class H264Encoder {
 
                 @Override
                 public void onOutputFormatChanged(@NonNull MediaCodec codec, @NonNull MediaFormat format) {
+
                 }
             });
             mediaCodec.configure(mediaFormat, null, null, MediaCodec.CONFIGURE_FLAG_ENCODE);
+
             mediaCodec.start();
         } catch (IOException e) {
             e.printStackTrace();
@@ -128,6 +143,11 @@ public class H264Encoder {
     }
 
     public void stopEncoder() {
+        isRecording = false;
+
+        mediaMuxer.stop();
+        mediaMuxer.release();
+
         mediaCodec.stop();
         mediaCodec.release();
 
@@ -164,6 +184,9 @@ public class H264Encoder {
                     } else if (colorFormat == COLOR_FormatNV21) {
                         channelOffset = width * height + 1;
                         outputStride = 2;
+                    } else if (colorFormat == COLOR_FormatNV12){
+                        channelOffset = width * height;
+                        outputStride = 2;
                     }
                     break;
                 case 2:
@@ -172,6 +195,9 @@ public class H264Encoder {
                         outputStride = 1;
                     } else if (colorFormat == COLOR_FormatNV21) {
                         channelOffset = width * height;
+                        outputStride = 2;
+                    }else if (colorFormat == COLOR_FormatNV12){
+                        channelOffset = width * height + 1;
                         outputStride = 2;
                     }
                     break;
@@ -204,5 +230,19 @@ public class H264Encoder {
             }
         }
         return data;
+    }
+
+    public void compressToJpeg(Image image) {
+        String jpegFilePath = Environment.getExternalStorageDirectory() + "/avdemos/002.jpg";
+
+        FileOutputStream outStream;
+        try {
+            outStream = new FileOutputStream(jpegFilePath);
+        } catch (IOException ioe) {
+            throw new RuntimeException("Unable to create output file " + jpegFilePath, ioe);
+        }
+        Rect rect = image.getCropRect();
+        YuvImage yuvImage = new YuvImage(getDataFromImage(image, COLOR_FormatNV21), ImageFormat.NV21, rect.width(), rect.height(), null);
+        yuvImage.compressToJpeg(rect, 100, outStream);
     }
 }
