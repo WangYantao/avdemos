@@ -10,3 +10,4 @@
 * android Extractor 解封装 mp4 文件为 aac 和 h264 & Muxer 封装 video track 为 mp4文件
 * android camera2 api 预览&获取预览数据
 * 使用 MediaCodec & MediaMuxer 将 camera2 api 预览数据编码为mp4
+* 结合 MediaCodec & MediaMuxer & camera2 api & AudioRecorder 将相机数据和音频数据封装为mp4

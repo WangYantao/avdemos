@@ -4,7 +4,6 @@ import android.Manifest;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.graphics.ImageFormat;
-import android.graphics.Rect;
 import android.graphics.SurfaceTexture;
 import android.hardware.camera2.CameraAccessException;
 import android.hardware.camera2.CameraCaptureSession;
@@ -15,8 +14,11 @@ import android.hardware.camera2.CaptureRequest;
 import android.hardware.camera2.CaptureResult;
 import android.hardware.camera2.TotalCaptureResult;
 import android.hardware.camera2.params.StreamConfigurationMap;
+import android.media.AudioFormat;
+import android.media.AudioRecord;
 import android.media.Image;
 import android.media.ImageReader;
+import android.media.MediaRecorder;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
@@ -30,36 +32,51 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import com.demo.avdemos.R;
+import com.demo.avdemos.utils.ImageFormatUtil;
 
-import java.nio.ByteBuffer;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+import static com.demo.avdemos.camera.Muxer.AUDIO_SAMPLE_RATE;
+
 public class CameraActivity extends AppCompatActivity {
 
     private static final String TAG = "CameraActivity";
 
+    private static final int AUDIO_CHANNEL_IN = AudioFormat.CHANNEL_IN_MONO;
+    private static final int AUDIO_CHANNEL_OUT = AudioFormat.CHANNEL_OUT_MONO;
+    private static final int AUDIO_FORAMT = AudioFormat.ENCODING_PCM_16BIT;
+
     Button btnRecoderVideo;
+
     boolean isRecording = false;
-    H264Encoder h264Encoder;
+
+    Muxer muxer;
 
     SurfaceView surfaceView;
-
     CameraManager cameraManager;
     CameraCharacteristics characteristics;
     String cameraId;
-
     ImageReader outputReader;
     Size outputSize;
+
+    AudioRecord audioRecord;
+    int audioMinbufferSize;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_camera);
 
+        initData();
+
         initView();
+    }
+
+    private void initData(){
+        audioMinbufferSize = AudioRecord.getMinBufferSize(AUDIO_SAMPLE_RATE, AUDIO_CHANNEL_IN, AUDIO_FORAMT);
     }
 
     private void initView() {
@@ -67,17 +84,22 @@ public class CameraActivity extends AppCompatActivity {
         btnRecoderVideo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (h264Encoder == null){
-                    Toast.makeText(CameraActivity.this, "编码器尚未初始化", Toast.LENGTH_SHORT).show();
+                if (muxer == null){
+                    Toast.makeText(CameraActivity.this, "相关资源尚未初始化", Toast.LENGTH_SHORT).show();
                     return;
                 }
 
                 isRecording = !isRecording;
                 btnRecoderVideo.setText(isRecording ? "停止录制" : "开始录制");
                 if (isRecording){
-                    h264Encoder.startEncoder();
+                    audioRecord.startRecording();
+                    startAudioRecordThread();
+
+                    muxer.start();
                 }else {
-                    h264Encoder.stopEncoder();
+                    audioRecord.stop();
+
+                    muxer.stop();
                 }
             }
         });
@@ -105,6 +127,21 @@ public class CameraActivity extends AppCompatActivity {
         });
     }
 
+    private void startAudioRecordThread(){
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                byte[] data = new byte[audioMinbufferSize];
+                while (isRecording){
+                    int ret = audioRecord.read(data, 0, audioMinbufferSize);
+                    if (ret != AudioRecord.ERROR_INVALID_OPERATION) {
+                        muxer.addMuxerData(new Muxer.MuxerData(Muxer.TRACK_AUDIO, data));
+                    }
+                }
+            }
+        }).start();
+    }
+
     private void openCamera() {
         cameraManager = (CameraManager) getSystemService(Context.CAMERA_SERVICE);
 
@@ -114,7 +151,9 @@ public class CameraActivity extends AppCompatActivity {
 
         setReader();
 
-        setEncoder();
+        setMuxer();
+
+        setAudioRecord();
 
         if (checkSelfPermission(Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
 
@@ -224,8 +263,8 @@ public class CameraActivity extends AppCompatActivity {
             public void onImageAvailable(ImageReader reader) {
                 Image image = reader.acquireLatestImage();
                 if (image != null){
-                    if (h264Encoder != null){
-                        h264Encoder.putYuv420Data(H264Encoder.getDataFromImage(image, H264Encoder.COLOR_FormatNV12));
+                    if (muxer != null){
+                        muxer.addMuxerData(new Muxer.MuxerData(Muxer.TRACK_VIDEO, ImageFormatUtil.image2nv12(image)));
                     }
                     image.close();
                 }
@@ -233,7 +272,25 @@ public class CameraActivity extends AppCompatActivity {
         }, null);
     }
 
-    private void setEncoder(){
-        h264Encoder = new H264Encoder(outputSize.getWidth(), outputSize.getHeight(), 30);
+    private void setMuxer(){
+        muxer = new Muxer(outputSize.getWidth(), outputSize.getHeight());
+    }
+
+    private void setAudioRecord(){
+        audioRecord = new AudioRecord(MediaRecorder.AudioSource.MIC, Muxer.AUDIO_SAMPLE_RATE, AUDIO_CHANNEL_IN, AUDIO_FORAMT, audioMinbufferSize);
+    }
+
+    @Override
+    protected void onDestroy() {
+        if (isRecording){
+            audioRecord.stop();
+            muxer.stop();
+        }
+
+        if (audioRecord != null){
+            audioRecord.release();
+            audioRecord = null;
+        }
+        super.onDestroy();
     }
 }
