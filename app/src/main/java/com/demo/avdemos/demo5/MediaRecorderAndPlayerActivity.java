@@ -13,7 +13,9 @@ import android.hardware.camera2.CaptureRequest;
 import android.hardware.camera2.CaptureResult;
 import android.hardware.camera2.TotalCaptureResult;
 import android.hardware.camera2.params.StreamConfigurationMap;
+import android.media.MediaPlayer;
 import android.media.MediaRecorder;
+import android.net.Uri;
 import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
@@ -29,6 +31,7 @@ import android.widget.Toast;
 
 import com.demo.avdemos.R;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -59,8 +62,12 @@ public class MediaRecorderAndPlayerActivity extends AppCompatActivity implements
     String mp4FilePath;
 
     MediaRecorder mediaRecorder;
-
     boolean isRecording = false;
+
+    MediaPlayer mediaPlayer;
+    boolean isPlaying = false;
+
+    SurfaceView sfvPlay;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -102,12 +109,20 @@ public class MediaRecorderAndPlayerActivity extends AppCompatActivity implements
 
             }
         });
+
+        sfvPlay = findViewById(R.id.sfvPlay);
     }
 
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.btnRecord:
+
+                if (isPlaying){
+                    Toast.makeText(MediaRecorderAndPlayerActivity.this, "正在播放中，请先结束播放再录制", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
                 isRecording = !isRecording;
                 if (isRecording) {
                     startRecord();
@@ -117,7 +132,18 @@ public class MediaRecorderAndPlayerActivity extends AppCompatActivity implements
                 btnRecord.setText(isRecording ? "停止录制" : "开始录制");
                 break;
             case R.id.btnPlay:
+                if (isRecording){
+                    Toast.makeText(MediaRecorderAndPlayerActivity.this, "正在录制中，请先结束录制再播放", Toast.LENGTH_SHORT).show();
+                    return;
+                }
 
+                isPlaying = !isPlaying;
+                if (isPlaying) {
+                    startPlay();
+                } else {
+                    stopPlay();
+                }
+                btnPlay.setText(isPlaying ? "停止播放" : "开始播放");
                 break;
         }
     }
@@ -293,6 +319,35 @@ public class MediaRecorderAndPlayerActivity extends AppCompatActivity implements
             surfaces.add(sfvPreview.getHolder().getSurface());
 
             createCameraSession(surfaces);
+        }
+    }
+
+    private void startPlay(){
+        try {
+            mediaPlayer = new MediaPlayer();
+            mediaPlayer.setDisplay(sfvPlay.getHolder());
+            mediaPlayer.setDataSource(mp4FilePath);
+            mediaPlayer.setLooping(true);
+            mediaPlayer.prepareAsync();
+            mediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+                @Override
+                public void onPrepared(MediaPlayer mp) {
+                    mediaPlayer.start();
+                }
+            });
+        } catch (IOException e) {
+            Log.e(TAG, "______________startPlay: mediaplayer create error");
+            e.printStackTrace();
+        }
+    }
+
+    private void stopPlay(){
+        if (mediaPlayer != null){
+            if (mediaPlayer.isPlaying()){
+                mediaPlayer.stop();
+            }
+            mediaPlayer.release();
+            mediaPlayer = null;
         }
     }
 
