@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 
+import com.demo.avdemos.demo5.MediaRecorderAndPlayerActivity;
 import com.demo.avdemos.demo2.RecordAndPlayPCMActivity;
 import com.demo.avdemos.demo4.MediaRecordActivity;
 import com.demo.avdemos.demo3.ExtractorAndMuxerActivity;
@@ -17,7 +18,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private static final int PERMISSION_REQUEST_CODE= 100001;
 
-    Button btnShowImage, btnRecorderPCM, btnCamera, btnExtractorAndMuxer;
+    Button btnMediaRecorderAndPlayer, btnShowImage, btnRecorderPCM, btnCamera, btnExtractorAndMuxer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,6 +31,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void initView(){
+        btnMediaRecorderAndPlayer = findViewById(R.id.btnMediaRecorderAndPlayer);
+        btnMediaRecorderAndPlayer.setOnClickListener(this);
+
         btnShowImage = findViewById(R.id.btnShowImage);
         btnShowImage.setOnClickListener(this);
 
@@ -46,6 +50,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onClick(View v) {
         switch (v.getId()){
+            case R.id.btnMediaRecorderAndPlayer:
+                toActivity(MediaRecorderAndPlayerActivity.class);
+                break;
             case R.id.btnShowImage:
                 toActivity(ShowImageActivity.class);
                 break;
