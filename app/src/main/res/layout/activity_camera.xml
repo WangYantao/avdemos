@@ -5,11 +5,11 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".camera.CameraActivity">
+    tools:context=".demo4.MediaRecordActivity">
 
     <TextView
         android:layout_gravity="center_horizontal"
-        android:text="相机详细内容可参考：\n https://github.com/WangYantao/android-camera-demos"
+        android:text="camera2+AudioRecord+MediaCodec+MediaMuxer\n其中关于camera2的详细内容可参考：\n https://github.com/WangYantao/android-camera-demos"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
 

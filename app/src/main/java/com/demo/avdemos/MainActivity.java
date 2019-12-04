@@ -8,10 +8,10 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 
-import com.demo.avdemos.audio.RecordAndPlayPCMActivity;
-import com.demo.avdemos.camera.CameraActivity;
-import com.demo.avdemos.extractorandmuxer.ExtractorAndMuxerActivity;
-import com.demo.avdemos.image.ShowImageActivity;
+import com.demo.avdemos.demo2.RecordAndPlayPCMActivity;
+import com.demo.avdemos.demo4.MediaRecordActivity;
+import com.demo.avdemos.demo3.ExtractorAndMuxerActivity;
+import com.demo.avdemos.demo1.ShowImageActivity;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -53,7 +53,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 toActivity(RecordAndPlayPCMActivity.class);
                 break;
             case R.id.btnCamera:
-                toActivity(CameraActivity.class);
+                toActivity(MediaRecordActivity.class);
                 break;
             case R.id.btnExtractorAndMuxer:
                 toActivity(ExtractorAndMuxerActivity.class);

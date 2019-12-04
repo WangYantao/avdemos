@@ -2,12 +2,7 @@
 
 记录一些音视频开发方面的知识
 
-* android 几种显示图片的方式
-* android AudioRecorder 录制音频（PCM）
-* pcm 转 wav
-* AudioTrack 播放 wav 音频（static mode & stream mode）
-* android camera2 api 使用 参考（https://github.com/WangYantao/android-camera-demos）
-* android Extractor 解封装 mp4 文件为 aac 和 h264 & Muxer 封装 video track 为 mp4文件
-* android camera2 api 预览&获取预览数据
-* 使用 MediaCodec & MediaMuxer 将 camera2 api 预览数据编码为mp4
-* 结合 MediaCodec & MediaMuxer & camera2 api & AudioRecorder 将相机数据和音频数据封装为mp4
+* demo1：android 几种显示图片的方式
+* demo2：android AudioRecord 录制音频（PCM）、PCM 添加 wave 头、AudioTrack 播放 wav 音频
+* demo3：android AndroidExtractor 解封装 mp4 文件为 aac 和 h264
+* demo4：使用 camera2 api & AudioRecord & MediaCodec & MediaMuxer 录制 mp4

@@ -1,11 +1,10 @@
-package com.demo.avdemos.camera;
+package com.demo.avdemos.demo4;
 
 import android.media.MediaCodec;
 import android.media.MediaCodecInfo;
 import android.media.MediaFormat;
 import android.media.MediaMuxer;
 import android.os.Environment;
-import android.print.PrinterId;
 import android.support.annotation.NonNull;
 
 import java.io.IOException;

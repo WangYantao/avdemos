@@ -1,4 +1,4 @@
-package com.demo.avdemos.image;
+package com.demo.avdemos.demo1;
 
 import android.content.Context;
 import android.graphics.Bitmap;

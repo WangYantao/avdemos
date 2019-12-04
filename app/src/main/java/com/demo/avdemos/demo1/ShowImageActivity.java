@@ -1,4 +1,4 @@
-package com.demo.avdemos.image;
+package com.demo.avdemos.demo1;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -9,12 +9,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
-import android.widget.Button;
 import android.widget.ImageView;
 
 import com.demo.avdemos.R;
-
-import java.io.File;
 
 public class ShowImageActivity extends AppCompatActivity {
 

@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".image.ShowImageActivity">
+    tools:context=".demo1.ShowImageActivity">
 
     <LinearLayout
         android:orientation="vertical"
@@ -48,7 +48,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 
-        <com.demo.avdemos.image.CustomView
+        <com.demo.avdemos.demo1.CustomView
             android:id="@+id/customView"
             android:layout_width="match_parent"
             android:layout_height="200dp" />

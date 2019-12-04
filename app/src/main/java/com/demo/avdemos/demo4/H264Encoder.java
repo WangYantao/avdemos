@@ -1,4 +1,4 @@
-package com.demo.avdemos.camera;
+package com.demo.avdemos.demo4;
 
 import android.graphics.ImageFormat;
 import android.graphics.Rect;
@@ -6,19 +6,15 @@ import android.graphics.YuvImage;
 import android.media.Image;
 import android.media.MediaCodec;
 import android.media.MediaCodecInfo;
-import android.media.MediaCodecList;
 import android.media.MediaFormat;
 import android.media.MediaMuxer;
 import android.os.Environment;
-import android.provider.MediaStore;
 import android.support.annotation.NonNull;
-import android.util.Log;
 
 import java.io.BufferedOutputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
-import java.util.Date;
 import java.util.concurrent.ArrayBlockingQueue;
 
 /**

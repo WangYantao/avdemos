@@ -14,25 +14,25 @@
 
        <Button
            android:id="@+id/btnShowImage"
-           android:text="几种显示图片的方式"
+           android:text="demo1:几种显示图片的方式"
            android:layout_width="match_parent"
            android:layout_height="wrap_content" />
 
        <Button
            android:id="@+id/btnRecorderPCM"
-           android:text="音频录制/播放"
-           android:layout_width="match_parent"
-           android:layout_height="wrap_content" />
-
-       <Button
-           android:id="@+id/btnCamera"
-           android:text="使用 camera api"
+           android:text="demo2:仅音频录制/播放"
            android:layout_width="match_parent"
            android:layout_height="wrap_content" />
 
        <Button
            android:id="@+id/btnExtractorAndMuxer"
-           android:text="媒体文件封装/解封装"
+           android:text="demo3:封装/解封装"
+           android:layout_width="match_parent"
+           android:layout_height="wrap_content" />
+
+       <Button
+           android:id="@+id/btnCamera"
+           android:text="demo4:音视频录制"
            android:layout_width="match_parent"
            android:layout_height="wrap_content" />
 

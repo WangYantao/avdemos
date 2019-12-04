@@ -1,4 +1,4 @@
-package com.demo.avdemos.extractorandmuxer;
+package com.demo.avdemos.demo3;
 
 import android.media.MediaCodec;
 import android.media.MediaExtractor;

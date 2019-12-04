@@ -1,4 +1,4 @@
-package com.demo.avdemos.camera;
+package com.demo.avdemos.demo4;
 
 import android.Manifest;
 import android.content.Context;
@@ -39,11 +39,11 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import static com.demo.avdemos.camera.Muxer.AUDIO_SAMPLE_RATE;
+import static com.demo.avdemos.demo4.Muxer.AUDIO_SAMPLE_RATE;
 
-public class CameraActivity extends AppCompatActivity {
+public class MediaRecordActivity extends AppCompatActivity {
 
-    private static final String TAG = "CameraActivity";
+    private static final String TAG = "MediaRecordActivity";
 
     private static final int AUDIO_CHANNEL_IN = AudioFormat.CHANNEL_IN_MONO;
     private static final int AUDIO_CHANNEL_OUT = AudioFormat.CHANNEL_OUT_MONO;
@@ -85,7 +85,7 @@ public class CameraActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if (muxer == null){
-                    Toast.makeText(CameraActivity.this, "相关资源尚未初始化", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(MediaRecordActivity.this, "相关资源尚未初始化", Toast.LENGTH_SHORT).show();
                     return;
                 }
 

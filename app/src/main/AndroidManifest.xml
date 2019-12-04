@@ -17,11 +17,11 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".extractorandmuxer.ExtractorAndMuxerActivity"></activity>
-        <activity android:name=".camera.CameraActivity"
+        <activity android:name=".demo3.ExtractorAndMuxerActivity"></activity>
+        <activity android:name=".demo4.MediaRecordActivity"
             android:screenOrientation="portrait"/>
-        <activity android:name=".audio.RecordAndPlayPCMActivity" />
-        <activity android:name=".image.ShowImageActivity" />
+        <activity android:name=".demo2.RecordAndPlayPCMActivity" />
+        <activity android:name=".demo1.ShowImageActivity" />
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

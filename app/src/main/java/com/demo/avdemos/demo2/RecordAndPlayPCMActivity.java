@@ -1,4 +1,4 @@
-package com.demo.avdemos.audio;
+package com.demo.avdemos.demo2;
 
 import android.media.AudioAttributes;
 import android.media.AudioFormat;

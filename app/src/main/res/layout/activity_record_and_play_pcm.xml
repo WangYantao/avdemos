@@ -5,17 +5,17 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".audio.RecordAndPlayPCMActivity">
+    tools:context=".demo2.RecordAndPlayPCMActivity">
 
     <Button
         android:id="@+id/btnStart"
-        android:text="开始录制(PCM)"
+        android:text="AudioRecord开始录制(PCM)"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
     <Button
         android:id="@+id/btnStop"
-        android:text="停止录制(PCM)"
+        android:text="AudioRecord停止录制(PCM)"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
@@ -27,13 +27,13 @@
 
     <Button
         android:id="@+id/btnPlayInStaticMode"
-        android:text="播放(static mode)"
+        android:text="AudioTrack播放(static mode)"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
     <Button
         android:id="@+id/btnPlayInStreamMode"
-        android:text="播放(stream mode)"
+        android:text="AudioTrack播放(stream mode)"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 </LinearLayout>
