@@ -73,6 +73,6 @@ public class TextureRender extends BaseRender{
         GLUtil.disableVertexAtt(program, ATT_DES_VERTEX_ATT);
         GLUtil.disableVertexAtt(program, ATT_DES_TEX_COORD);
 
-        GLUtil.unbindTexture(texUnitIndex);
+        GLUtil.unbindTexture(GL_TEXTURE_2D);
     }
 }

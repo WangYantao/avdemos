@@ -18,10 +18,14 @@ public abstract class GLSVActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_glsv);
 
+        initData();
+
         initRender();
 
         initView();
     }
+
+    public void initData(){}
 
     private void initRender(){
         render = getRender();
