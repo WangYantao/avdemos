@@ -1,49 +1,40 @@
 package com.demo.avdemos.demo6;
 
-import android.opengl.GLSurfaceView;
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
 
 import com.demo.avdemos.R;
 
-public class GLActivity extends AppCompatActivity {
+public class GLActivity extends AppCompatActivity implements View.OnClickListener {
 
-    private static final int GL_VERSION = 3;
-
-    GLSurfaceView glsv;
-    GLSurfaceView.Renderer render;
+    Button btnTriangle;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_gl);
 
-        initRender();
-
         initView();
     }
 
-    private void initRender(){
-        render = new TriangleRender();
-    }
-
     private void initView(){
-        glsv = findViewById(R.id.glsv);
-        glsv.setEGLContextClientVersion(GL_VERSION);
-        glsv.setRenderer(render);
+        btnTriangle = findViewById(R.id.btnTriangle);
+        btnTriangle.setOnClickListener(this);
     }
 
     @Override
-    protected void onResume() {
-        super.onResume();
-
-        glsv.onResume();
+    public void onClick(View v) {
+        switch (v.getId()){
+            case R.id.btnTriangle:
+                toActivity(TriangleActivity.class);
+                break;
+        }
     }
 
-    @Override
-    protected void onPause() {
-        super.onPause();
-
-        glsv.onPause();
+    private void toActivity(Class cls){
+        startActivity(new Intent(GLActivity.this, cls));
     }
 }

@@ -9,7 +9,9 @@
     <uses-permission android:name="android.permission.CAMERA" />
 
     <uses-feature android:name="android.hardware.camera" />
-    <uses-feature android:glEsVersion="0x00030000" android:required="true" />
+    <uses-feature
+        android:glEsVersion="0x00030000"
+        android:required="true" />
 
     <application
         android:allowBackup="true"
@@ -19,6 +21,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity android:name=".demo6.GLActivity"></activity>
+        <activity android:name=".demo6.TriangleActivity" />
         <activity android:name=".demo5.MediaRecorderAndPlayerActivity" />
         <activity android:name=".demo3.ExtractorAndMuxerActivity" />
         <activity
