@@ -1,6 +1,9 @@
 package com.demo.avdemos.utils;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.opengl.GLUtils;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -158,5 +161,51 @@ public class GLUtil {
         }
 
         return orthoM;
+    }
+
+    public static int loadTextureFromRes(int resId){
+        int[] textures = new int[1];
+        glGenTextures(1, textures, 0);
+        int textureId = textures[0];
+        if (textureId == 0){
+            LogUtil.e("load texture error");
+            throw new RuntimeException("load texture error");
+        }
+
+        glBindTexture(GL_TEXTURE_2D, textureId);
+        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+
+        BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inScaled = false;
+        Bitmap bitmap = BitmapFactory.decodeResource(context.getResources(), resId, options);
+        if (bitmap == null){
+            //删除纹理对象
+            glDeleteTextures(1, textures, 0);
+            LogUtil.e("load bitmap error");
+            throw new RuntimeException("load bitmap error");
+        }
+
+        GLUtils.texImage2D(GL_TEXTURE_2D, 0, bitmap, 0);
+        glGenerateMipmap(GL_TEXTURE_2D);
+
+        glBindTexture(GL_TEXTURE_2D, 0);
+
+        bitmap.recycle();
+        return textureId;
+    }
+
+    public static void setUniformTexture(int program, String uniformTexDes, int texUnitIndex, int texTarget, int tex){
+        glActiveTexture(GL_TEXTURE0 + texUnitIndex);
+        glBindTexture(texTarget, tex);
+
+        int uniformTexPosition = glGetUniformLocation(program, uniformTexDes);
+        glUniform1i(uniformTexPosition, texUnitIndex);
+    }
+
+    public static void unbindTexture(int texTarget){
+        glBindTexture(texTarget, 0);
     }
 }

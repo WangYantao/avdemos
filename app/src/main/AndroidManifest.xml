@@ -20,8 +20,10 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".demo6.GLActivity"></activity>
-        <activity android:name=".demo6.TriangleActivity" />
+        <activity android:name=".demo6.TriangleActivity"></activity>
+        <activity android:name=".demo6.TextureActivity" />
+        <activity android:name=".demo6.GLActivity" />
+        <activity android:name=".demo6.GLSVActivity" />
         <activity android:name=".demo5.MediaRecorderAndPlayerActivity" />
         <activity android:name=".demo3.ExtractorAndMuxerActivity" />
         <activity

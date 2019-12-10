@@ -10,7 +10,7 @@ import com.demo.avdemos.R;
 
 public class GLActivity extends AppCompatActivity implements View.OnClickListener {
 
-    Button btnTriangle;
+    Button btnTriangle, btnTexture;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -23,6 +23,9 @@ public class GLActivity extends AppCompatActivity implements View.OnClickListene
     private void initView(){
         btnTriangle = findViewById(R.id.btnTriangle);
         btnTriangle.setOnClickListener(this);
+
+        btnTexture = findViewById(R.id.btnTexture);
+        btnTexture.setOnClickListener(this);
     }
 
     @Override
@@ -30,6 +33,9 @@ public class GLActivity extends AppCompatActivity implements View.OnClickListene
         switch (v.getId()){
             case R.id.btnTriangle:
                 toActivity(TriangleActivity.class);
+                break;
+            case R.id.btnTexture:
+                toActivity(TextureActivity.class);
                 break;
         }
     }

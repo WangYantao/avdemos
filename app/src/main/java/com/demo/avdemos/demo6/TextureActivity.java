@@ -6,7 +6,7 @@ import android.os.Bundle;
 
 import com.demo.avdemos.R;
 
-public class TriangleActivity extends GLSVActivity {
+public class TextureActivity extends GLSVActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -15,6 +15,6 @@ public class TriangleActivity extends GLSVActivity {
 
     @Override
     public GLSurfaceView.Renderer getRender() {
-        return new TriangleRender();
+        return new TextureRender();
     }
 }
