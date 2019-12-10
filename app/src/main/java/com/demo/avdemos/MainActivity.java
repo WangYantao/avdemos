@@ -13,21 +13,30 @@ import com.demo.avdemos.demo2.RecordAndPlayPCMActivity;
 import com.demo.avdemos.demo4.MediaRecordActivity;
 import com.demo.avdemos.demo3.ExtractorAndMuxerActivity;
 import com.demo.avdemos.demo1.ShowImageActivity;
+import com.demo.avdemos.demo6.GLActivity;
+import com.demo.avdemos.utils.GLUtil;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
     private static final int PERMISSION_REQUEST_CODE= 100001;
 
-    Button btnMediaRecorderAndPlayer, btnShowImage, btnRecorderPCM, btnCamera, btnExtractorAndMuxer;
+    Button btnMediaRecorderAndPlayer, btnShowImage, btnRecorderPCM, btnCamera, btnExtractorAndMuxer,
+            btnOpengl;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        initUtils();
+
         initView();
 
         getPermissions();
+    }
+
+    private void initUtils(){
+        GLUtil.init(this);
     }
 
     private void initView(){
@@ -45,6 +54,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         btnExtractorAndMuxer = findViewById(R.id.btnExtractorAndMuxer);
         btnExtractorAndMuxer.setOnClickListener(this);
+
+        btnOpengl = findViewById(R.id.btnOpengl);
+        btnOpengl.setOnClickListener(this);
     }
 
     @Override
@@ -64,6 +76,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 break;
             case R.id.btnExtractorAndMuxer:
                 toActivity(ExtractorAndMuxerActivity.class);
+                break;
+            case R.id.btnOpengl:
+                toActivity(GLActivity.class);
                 break;
         }
     }
