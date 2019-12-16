@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.opengl.GLUtils;
+import android.opengl.Matrix;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -169,6 +170,12 @@ public class GLUtil {
         }
 
         return orthoM;
+    }
+
+    public static float[] getLookAtMatrix(){
+        float[] lookAtM = new float[16];
+        Matrix.setLookAtM(lookAtM, 0, 0f, 0f, 1f, 0f, 0f, 0f, 0f, 1f, 0f);
+        return lookAtM;
     }
 
     public static int createTexture(){
