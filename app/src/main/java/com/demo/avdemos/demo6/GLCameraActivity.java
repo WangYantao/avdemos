@@ -56,6 +56,7 @@ public class GLCameraActivity extends GLSVActivity{
     @Override
     public GLSurfaceView.Renderer getRender() {
         cameraRender = new CameraRender();
+        cameraRender.setTextureSize(outputSize);
         cameraRender.setSurfaceStatedListener(new CameraRender.SurfaceStatedListener() {
             @Override
             public void onSurfaceCreated() {

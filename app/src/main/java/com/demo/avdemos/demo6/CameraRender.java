@@ -1,6 +1,7 @@
 package com.demo.avdemos.demo6;
 
 import android.graphics.SurfaceTexture;
+import android.util.Size;
 
 import com.demo.avdemos.R;
 import com.demo.avdemos.utils.GLUtil;
@@ -27,7 +28,7 @@ public class CameraRender extends BaseRender {
     private static final int ATT_BUFFER_SIZE_VERTEX_ATT = 3;
     private static final int ATT_BUFFER_SIZE_TEX_COORD = 2;
 
-    public static final float[] VERTEX_ATT ={
+    public static float[] VERTEX_ATT ={
             -1f,1f,0.0f,
             -1f,-1f,0.0f,
             1f,-1f,0.0f,
@@ -60,6 +61,8 @@ public class CameraRender extends BaseRender {
     private int inputTexture;
     private SurfaceTexture inputSurfaceTexture;
 
+    private Size textureSize;
+
     public SurfaceTexture getInputSurfaceTexture(){
         return inputSurfaceTexture;
     }
@@ -68,10 +71,27 @@ public class CameraRender extends BaseRender {
         this.surfaceStatedListener = listener;
     }
 
-    @Override
-    public void prepareDatas() {
+    public void setTextureSize(Size textureSize) {
+        this.textureSize = textureSize;
+    }
+
+    private void fixTexCoordWithTextureSize(){
+        if (textureSize == null){
+            return;
+        }
+
+        float ratio = (float) textureSize.getHeight() / (float) textureSize.getWidth();
+
+        TEX_COORD[2] = ratio;
+        TEX_COORD[4] = ratio;
+
         vertexAttBuffer = GLUtil.floatArray2buffer(VERTEX_ATT);
         texCoordBuffer = GLUtil.floatArray2buffer(TEX_COORD);
+    }
+
+    @Override
+    public void prepareDatas() {
+
     }
 
     @Override
@@ -99,6 +119,8 @@ public class CameraRender extends BaseRender {
     @Override
     public void doOnSurfaceChanged(int width, int height) {
         super.doOnSurfaceChanged(width, height);
+
+        fixTexCoordWithTextureSize();
     }
 
     @Override

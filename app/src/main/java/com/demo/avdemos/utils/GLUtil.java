@@ -152,12 +152,20 @@ public class GLUtil {
     public static float[] getOrthoMatrix(int width, int height){
         float[] orthoM = new float[16];
 
+//        float aspectRatio = width > height ?
+//                (float)width / (float)height : (float)height / (float)width;
+//        if (width > height){
+//            orthoM(orthoM, 0, -aspectRatio, aspectRatio, -1f, 1f, -1f, 1f);
+//        }else {
+//            orthoM(orthoM, 0, -1f, 1f, -aspectRatio, aspectRatio, -1f, 1f);
+//        }
+
         float aspectRatio = width > height ?
-                (float)width / (float)height : (float)height / (float)width;
+                (float)height / (float)width : (float)width / (float)height;
         if (width > height){
-            orthoM(orthoM, 0, -aspectRatio, aspectRatio, -1f, 1f, -1f, 1f);
-        }else {
             orthoM(orthoM, 0, -1f, 1f, -aspectRatio, aspectRatio, -1f, 1f);
+        }else {
+            orthoM(orthoM, 0, -aspectRatio, aspectRatio, -1f, 1f, -1f, 1f);
         }
 
         return orthoM;
