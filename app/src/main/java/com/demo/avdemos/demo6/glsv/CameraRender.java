@@ -1,4 +1,4 @@
-package com.demo.avdemos.demo6;
+package com.demo.avdemos.demo6.glsv;
 
 import android.graphics.SurfaceTexture;
 import android.util.Size;

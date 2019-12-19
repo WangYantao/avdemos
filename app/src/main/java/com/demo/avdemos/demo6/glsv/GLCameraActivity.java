@@ -1,4 +1,4 @@
-package com.demo.avdemos.demo6;
+package com.demo.avdemos.demo6.glsv;
 
 import android.Manifest;
 import android.content.Context;
@@ -19,8 +19,6 @@ import android.support.annotation.NonNull;
 import android.util.Size;
 import android.view.Surface;
 import android.widget.Toast;
-
-import com.demo.avdemos.utils.LogUtil;
 
 import java.util.Arrays;
 import java.util.Collections;

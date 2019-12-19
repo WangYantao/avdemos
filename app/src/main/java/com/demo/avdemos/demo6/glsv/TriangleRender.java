@@ -1,4 +1,4 @@
-package com.demo.avdemos.demo6;
+package com.demo.avdemos.demo6.glsv;
 
 import com.demo.avdemos.R;
 import com.demo.avdemos.utils.GLUtil;

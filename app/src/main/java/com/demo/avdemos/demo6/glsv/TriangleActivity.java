@@ -1,10 +1,7 @@
-package com.demo.avdemos.demo6;
+package com.demo.avdemos.demo6.glsv;
 
 import android.opengl.GLSurfaceView;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-
-import com.demo.avdemos.R;
 
 public class TriangleActivity extends GLSVActivity {
 
