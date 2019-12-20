@@ -1,6 +1,7 @@
 package com.demo.avdemos.demo6.egl;
 
 import android.opengl.EGLContext;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.Message;
@@ -49,6 +50,17 @@ public abstract class BaseEGLRender extends HandlerThread {
         this.renderStateListener = renderStateListener;
     }
 
+    public static BaseEGLRender getInstance(String name){
+        return getInstance(name, null);
+    }
+
+    public static BaseEGLRender getInstance(String name, EGLContext eglContext){
+        BaseEGLRender render = new TextureEGLRender(name, eglContext);
+        render.start();
+        render.initHandler();
+        return render;
+    }
+
     public BaseEGLRender(String name) {
         this(name, null);
     }
@@ -80,6 +92,37 @@ public abstract class BaseEGLRender extends HandlerThread {
                 }
             }
         };
+    }
+
+    public void prepareEglEnvironment(){
+        Message msg = new Message();
+        msg.what = MESSAGE_PREPARE_EGL_ENVIRONMENT;
+        handler.sendMessage(msg);
+    }
+
+    public void createSurface(Surface surface){
+        Message msg = new Message();
+        msg.what = BaseEGLRender.MESSAGE_CREATE_SURFACE;
+        Bundle bundle = new Bundle();
+        bundle.putParcelable(BaseEGLRender.BUNDLE_NAME_VIEW_PORT_SURFACE, surface);
+        msg.setData(bundle);
+        handler.sendMessage(msg);
+    }
+
+    public void changeSurface(int width, int height){
+        Message msg = new Message();
+        msg.what = BaseEGLRender.MESSAGE_CHANGE_SURFACE;
+        Bundle bundle = new Bundle();
+        bundle.putInt(BaseEGLRender.BUNDLE_NAME_VIEW_PORT_WIDTH, width);
+        bundle.putInt(BaseEGLRender.BUNDLE_NAME_VIEW_PORT_HEIGHT, height);
+        msg.setData(bundle);
+        handler.sendMessage(msg);
+    }
+
+    public void drawFrame(){
+        Message msg = new Message();
+        msg.what = BaseEGLRender.MESSAGE_DRAW_FRAME;
+        handler.sendMessage(msg);
     }
 
     private void initEGL(EGLContext eglContext) {
