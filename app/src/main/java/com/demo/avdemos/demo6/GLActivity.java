@@ -1,4 +1,4 @@
-package com.demo.avdemos.demo6.glsv;
+package com.demo.avdemos.demo6;
 
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
@@ -7,10 +7,14 @@ import android.view.View;
 import android.widget.Button;
 
 import com.demo.avdemos.R;
+import com.demo.avdemos.demo6.egl.TextureEGLActivity;
+import com.demo.avdemos.demo6.glsv.GLCameraActivity;
+import com.demo.avdemos.demo6.glsv.TextureActivity;
+import com.demo.avdemos.demo6.glsv.TriangleActivity;
 
 public class GLActivity extends AppCompatActivity implements View.OnClickListener {
 
-    Button btnTriangle, btnTexture, btnGLCamera;
+    Button btnTriangle, btnTexture, btnGLCamera, btnEGL;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,6 +33,9 @@ public class GLActivity extends AppCompatActivity implements View.OnClickListene
 
         btnGLCamera = findViewById(R.id.btnGLCamera);
         btnGLCamera.setOnClickListener(this);
+
+        btnEGL = findViewById(R.id.btnEGL);
+        btnEGL.setOnClickListener(this);
     }
 
     @Override
@@ -42,6 +49,9 @@ public class GLActivity extends AppCompatActivity implements View.OnClickListene
                 break;
             case R.id.btnGLCamera:
                 toActivity(GLCameraActivity.class);
+                break;
+            case R.id.btnEGL:
+                toActivity(TextureEGLActivity.class);
                 break;
         }
     }

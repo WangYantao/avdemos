@@ -13,7 +13,7 @@ import com.demo.avdemos.demo2.RecordAndPlayPCMActivity;
 import com.demo.avdemos.demo4.MediaRecordActivity;
 import com.demo.avdemos.demo3.ExtractorAndMuxerActivity;
 import com.demo.avdemos.demo1.ShowImageActivity;
-import com.demo.avdemos.demo6.glsv.GLActivity;
+import com.demo.avdemos.demo6.GLActivity;
 import com.demo.avdemos.utils.GLUtil;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {

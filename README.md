@@ -7,4 +7,6 @@
 * demo3：android AndroidExtractor 解封装 mp4 文件为 aac 和 h264
 * demo4：使用 camera2 api & AudioRecord & MediaCodec & MediaMuxer 录制 mp4
 * demo5：使用camera2+MediaRecorder+MediaPlayer进行音视频的录制和播放
-* demo6：使用 opengl es，绘制图形&纹理&相机预览
+* demo6：使用 opengl es
+    * 基于GLSurfaceView：绘制图形&纹理&相机预览
+    * EGL：封装&纹理

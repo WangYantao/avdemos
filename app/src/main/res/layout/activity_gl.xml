@@ -5,7 +5,7 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".demo6.glsv.GLActivity">
+    tools:context=".demo6.GLActivity">
 
     <LinearLayout
         android:orientation="vertical"
@@ -27,6 +27,12 @@
         <Button
             android:id="@+id/btnGLCamera"
             android:text="使用GLSurfaceView预览渲染相机预览数据"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <Button
+            android:id="@+id/btnEGL"
+            android:text="使用EGL渲染纹理"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 
