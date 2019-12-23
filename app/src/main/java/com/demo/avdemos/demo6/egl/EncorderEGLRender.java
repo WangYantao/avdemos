@@ -10,12 +10,19 @@ import com.demo.avdemos.utils.GLUtil;
 import java.nio.FloatBuffer;
 
 import static android.opengl.GLES11Ext.GL_TEXTURE_EXTERNAL_OES;
-import static android.opengl.GLES30.*;
+import static android.opengl.GLES30.GL_COLOR_BUFFER_BIT;
+import static android.opengl.GLES30.GL_FLOAT;
+import static android.opengl.GLES30.GL_TRIANGLE_FAN;
+import static android.opengl.GLES30.glClear;
+import static android.opengl.GLES30.glClearColor;
+import static android.opengl.GLES30.glDrawArrays;
+import static android.opengl.GLES30.glUseProgram;
+import static android.opengl.GLES30.glViewport;
 
 /**
  * Created by wangyt on 2019/12/23
  */
-public class CameraEGLRender extends BaseEGLRender {
+public class EncorderEGLRender extends BaseEGLRender {
     private static final String ATT_DES_VERTEX_ATT = "aPosition";
     private static final String ATT_DES_TEX_COORD = "aTexCoord";
     private static final String UNIFORM_DES_MATRIX = "uMatrix";
@@ -57,33 +64,28 @@ public class CameraEGLRender extends BaseEGLRender {
     public float[] finalMatrix = new float[16];
 
     private int texture;
-    private SurfaceTexture surfaceTexture;
 
-    public CameraEGLRender(String name) {
+    public EncorderEGLRender(String name) {
         super(name);
     }
 
-    public CameraEGLRender(String name, EGLContext eglContext) {
+    public EncorderEGLRender(String name, EGLContext eglContext) {
         super(name, eglContext);
     }
 
-    public static CameraEGLRender getInstance(String name){
+    public static EncorderEGLRender getInstance(String name){
         return getInstance(name, null);
     }
 
-    public static CameraEGLRender getInstance(String name, EGLContext eglContext){
-        CameraEGLRender render = new CameraEGLRender(name, eglContext);
+    public static EncorderEGLRender getInstance(String name, EGLContext eglContext){
+        EncorderEGLRender render = new EncorderEGLRender(name, eglContext);
         render.start();
         render.initHandler();
         return render;
     }
 
-    public int getTexture(){
-        return texture;
-    }
-
-    public SurfaceTexture getSurfaceTexture(){
-        return surfaceTexture;
+    public void setTexture(int texture){
+        this.texture = texture;
     }
 
     @Override
@@ -93,10 +95,6 @@ public class CameraEGLRender extends BaseEGLRender {
 
         vertexAttBuffer = GLUtil.floatArray2buffer(VERTEX_ATT);
         texCoordBuffer = GLUtil.floatArray2buffer(TEX_COORD);
-
-        texture = GLUtil.createTexture();
-        GLUtil.setTexParams(GL_TEXTURE_EXTERNAL_OES, texture);
-        surfaceTexture = new SurfaceTexture(texture);
     }
 
     @Override
@@ -110,10 +108,6 @@ public class CameraEGLRender extends BaseEGLRender {
 
     @Override
     public void onDrawFrame() {
-        if (surfaceTexture != null){
-            surfaceTexture.updateTexImage();
-        }
-
         glClear(GL_COLOR_BUFFER_BIT);
         glUseProgram(program);
 
@@ -122,7 +116,7 @@ public class CameraEGLRender extends BaseEGLRender {
         GLUtil.processVertexAtt(program, ATT_DES_VERTEX_ATT, vertexAttBuffer, GL_FLOAT, 0, ATT_BUFFER_SIZE_VERTEX_ATT, 0);
         GLUtil.processVertexAtt(program, ATT_DES_TEX_COORD, texCoordBuffer, GL_FLOAT, 0, ATT_BUFFER_SIZE_TEX_COORD, 0);
 
-        int texUnitIndex = 1;
+        int texUnitIndex = 2;
         GLUtil.setUniformTexture(program, UNIFORM_DES_TEX, texUnitIndex, GL_TEXTURE_EXTERNAL_OES, texture);
 
         glDrawArrays(GL_TRIANGLE_FAN, 0, VERTEX_ATT.length / 3);

@@ -76,7 +76,7 @@ public class CameraHelper {
                 return o2.getWidth() * o2.getHeight() - o1.getWidth() * o1.getHeight();
             }
         });
-        outputSize = sizes.get(0);
+        outputSize = sizes.get(8);
 //        for (Size size : sizes){
 //            if (size.getWidth() < 2000 && size.getWidth() > 1000 && size.getHeight() < 2000 && size.getHeight() > 1000){
 //                outputSize = size;

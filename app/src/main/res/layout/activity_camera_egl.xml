@@ -7,6 +7,12 @@
     android:orientation="vertical"
     tools:context=".demo6.egl.CameraEGLActivity">
 
+    <Button
+        android:id="@+id/btnRecorder"
+        android:text="开始录制"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
     <SurfaceView
         android:id="@+id/surfaceView"
         android:layout_width="match_parent"

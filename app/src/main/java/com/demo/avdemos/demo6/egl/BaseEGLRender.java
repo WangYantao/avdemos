@@ -21,6 +21,8 @@ public abstract class BaseEGLRender extends HandlerThread {
         void onSurfaceChanged(int width, int height);
 
         void onBeiginDrawFrame();
+
+        void onFinishDrawFrame();
     }
 
     public static final String BUNDLE_NAME_VIEW_PORT_SURFACE = "BUNDLE_NAME_VIEW_PORT_SURFACE";
@@ -37,6 +39,16 @@ public abstract class BaseEGLRender extends HandlerThread {
     private EGLHelper eglHelper;
     private Handler handler;
     private EGLContext eglContextTmp;
+
+    private int width, height;
+
+    public int getWidth(){
+        return width;
+    }
+
+    public int getHeight(){
+        return height;
+    }
 
     public EGLHelper getEglHelper() {
         return eglHelper;
@@ -135,6 +147,9 @@ public abstract class BaseEGLRender extends HandlerThread {
     public abstract void onSurfaceChanged(int width, int height);
 
     private void doChangeSurface(int width, int height) {
+        this.width = width;
+        this.height = height;
+
         onSurfaceChanged(width, height);
 
         if(renderStateListener != null){
@@ -152,6 +167,10 @@ public abstract class BaseEGLRender extends HandlerThread {
         onDrawFrame();
 
         eglHelper.swapBuffers();
+
+        if(renderStateListener != null){
+            renderStateListener.onFinishDrawFrame();
+        }
     }
 
     @Override
