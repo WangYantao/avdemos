@@ -10,6 +10,7 @@ import android.view.View;
 import android.widget.Button;
 
 import com.demo.avdemos.R;
+import com.demo.avdemos.encoder.H264SurfaceEncoder;
 import com.demo.avdemos.utils.CameraHelper;
 
 import java.util.ArrayList;
@@ -25,7 +26,7 @@ public class CameraEGLActivity extends AppCompatActivity {
     CameraHelper cameraHelper;
 
     EncorderEGLRender encoderRender;
-    H264EGLEncoder h264EGLEncoder;
+    H264SurfaceEncoder h264SurfaceEncoder;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -126,7 +127,7 @@ public class CameraEGLActivity extends AppCompatActivity {
     private void startRecord(){
         int width = cameraEGLRender.getWidth() % 2 == 0 ? cameraEGLRender.getWidth() : cameraEGLRender.getWidth() - 1;
         int height = cameraEGLRender.getHeight() % 2 == 0 ? cameraEGLRender.getHeight() : cameraEGLRender.getHeight() - 1;
-        h264EGLEncoder = new H264EGLEncoder(width, height, 30);
+        h264SurfaceEncoder = new H264SurfaceEncoder(width, height, 30);
 
         encoderRender = EncorderEGLRender.getInstance("encorderRender", cameraEGLRender.getEglHelper().getEglContext());
         encoderRender.setRenderStateListener(new BaseEGLRender.RenderStateListener() {
@@ -138,7 +139,7 @@ public class CameraEGLActivity extends AppCompatActivity {
             @Override
             public void onSurfaceChanged(int width, int height) {
                 isRecording = !isRecording;
-                h264EGLEncoder.startEncoder();
+                h264SurfaceEncoder.startEncoder();
             }
 
             @Override
@@ -153,13 +154,13 @@ public class CameraEGLActivity extends AppCompatActivity {
         });
         encoderRender.prepareEglEnvironment();
         encoderRender.setTexture(cameraEGLRender.getTexture());
-        encoderRender.createSurface(h264EGLEncoder.getSurface());
+        encoderRender.createSurface(h264SurfaceEncoder.getSurface());
         encoderRender.changeSurface(cameraEGLRender.getWidth(), cameraEGLRender.getHeight());
     }
 
     private void stopRecord(){
         encoderRender.quitSafely();
-        h264EGLEncoder.stopEncoder();
+        h264SurfaceEncoder.stopEncoder();
     }
 
     private void initCamera(){

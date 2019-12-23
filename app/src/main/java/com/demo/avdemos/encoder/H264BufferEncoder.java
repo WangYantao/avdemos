@@ -1,4 +1,4 @@
-package com.demo.avdemos.demo4;
+package com.demo.avdemos.encoder;
 
 import android.graphics.ImageFormat;
 import android.graphics.Rect;
@@ -20,7 +20,7 @@ import java.util.concurrent.ArrayBlockingQueue;
 /**
  * Created by wangyt on 2019/11/28
  */
-public class H264Encoder {
+public class H264BufferEncoder {
 
     //另一种方案是使用 Surface 作为 input，需要结合 opengles EGL 使用，参考：https://bigflake.com/mediacodec/
     //Image MediaCodec YUV_420_888 COLOR_FormatYUV420Flexible 等知识，参考：https://www.polarxiong.com/category/Android/
@@ -30,7 +30,7 @@ public class H264Encoder {
 //    NV12: YYYYYYYY UVUV     =>YUV420SP
 //    NV21: YYYYYYYY VUVU     =>YUV420SP
 
-    private static final String TAG = "H264Encoder";
+    private static final String TAG = "H264BufferEncoder";
 
     public static final int COLOR_FormatI420 = 1;
     public static final int COLOR_FormatNV21 = 2;
@@ -49,7 +49,7 @@ public class H264Encoder {
     private boolean isRecording = false;
 
 
-    public H264Encoder(int width, int height, int framerate) {
+    public H264BufferEncoder(int width, int height, int framerate) {
         mp4FilePath = Environment.getExternalStorageDirectory() + "/avdemos/002.mp4";
 
         mediaFormat = MediaFormat.createVideoFormat(MediaFormat.MIMETYPE_VIDEO_AVC, width, height);
