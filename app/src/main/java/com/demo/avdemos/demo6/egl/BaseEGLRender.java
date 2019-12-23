@@ -50,17 +50,6 @@ public abstract class BaseEGLRender extends HandlerThread {
         this.renderStateListener = renderStateListener;
     }
 
-    public static BaseEGLRender getInstance(String name){
-        return getInstance(name, null);
-    }
-
-    public static BaseEGLRender getInstance(String name, EGLContext eglContext){
-        BaseEGLRender render = new TextureEGLRender(name, eglContext);
-        render.start();
-        render.initHandler();
-        return render;
-    }
-
     public BaseEGLRender(String name) {
         this(name, null);
     }

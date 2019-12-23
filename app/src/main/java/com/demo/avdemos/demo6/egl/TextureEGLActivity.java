@@ -11,7 +11,7 @@ import com.demo.avdemos.R;
 public class TextureEGLActivity extends AppCompatActivity {
 
     SurfaceView surfaceView;
-    BaseEGLRender textureEGLRender;
+    TextureEGLRender textureEGLRender;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

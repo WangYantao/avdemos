@@ -20,7 +20,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".demo6.egl.TextureEGLActivity"></activity>
+        <activity android:name=".demo6.egl.CameraEGLActivity"></activity>
+        <activity android:name=".demo6.egl.TextureEGLActivity" />
         <activity android:name=".demo6.glsv.GLCameraActivity" />
         <activity android:name=".demo6.glsv.TriangleActivity" />
         <activity android:name=".demo6.glsv.TextureActivity" />
